@@ -10,7 +10,7 @@ import IconButton from "../../../src/components/itens/icon-button";
 import Dialog from "../../../src/components/itens/dialog";
 import Toast from "../../../src/components/itens/toast";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import { faBroom, faSearch } from "@fortawesome/free-solid-svg-icons";
 import Produto from "../../../src/screens/produto/produto";
 import ToastStates from "../../../src/components/itens/toast/toast";
 import Categoria from "../../../src/screens/categoria/categoria";
@@ -58,7 +58,7 @@ export default function ConsultaProdutos({categorias}:{categorias: Categoria[]})
     setToastState({show: true, message: message, duration: duration, success: success});
   }
     
-  // Função Consulta
+  // Funções Consulta
   function buscar(event: React.FormEvent){
     event.preventDefault();
     setShowTable(false);
@@ -92,6 +92,15 @@ export default function ConsultaProdutos({categorias}:{categorias: Categoria[]})
       });
     }
   }
+
+  function limpar(event) {
+    event.preventDefault();
+    setConsultar({
+      nome: '',
+      categoria: ''
+    });
+    event.target.blur();
+  }  
   
   // Funções Tabela
   function changeQuantidade(event, index, id){
@@ -167,6 +176,10 @@ export default function ConsultaProdutos({categorias}:{categorias: Categoria[]})
                 <FontAwesomeIcon icon={faSearch}/>
                 {' '}
                 Consultar
+              </Button>
+              <Button type="button" onClick={(event) => limpar(event)} color="warn">
+                <FontAwesomeIcon icon={faBroom} />
+                Limpar
               </Button>
             </Form.Row>
           </Form>
@@ -265,7 +278,7 @@ export default function ConsultaProdutos({categorias}:{categorias: Categoria[]})
 
 
 export async function getServerSideProps(context){
-  const categorias = db["master@master"].categorias;
+  const categorias = JSON.parse(JSON.stringify(db["master@master"].categorias));
   return {
     props: { categorias }
   }

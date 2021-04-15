@@ -9,7 +9,7 @@ export default async (req: NextApiRequest, res: NextApiResponse<Categoria[]>) =>
   const session = await getSession({req});
 
   if (session) {
-    const categorias = db["master@master"].categorias;
+    const categorias = JSON.parse(JSON.stringify(db["master@master"].categorias));
     if (req.method === 'POST') {
       const listaIds = categorias.map(categoria => categoria['id']);
       const proximoId = Math.max(...listaIds) + 1;

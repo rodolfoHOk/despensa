@@ -21,6 +21,10 @@ const HeaderWarpper = styled.header`
       letter-spacing: 0.05rem;
     }
   }
+
+  @media print {
+    display: none;
+  }
 `;
 
 export default function Header(){

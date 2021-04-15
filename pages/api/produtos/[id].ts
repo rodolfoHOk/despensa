@@ -9,7 +9,7 @@ export default async (req: NextApiRequest, res: NextApiResponse<Produto | {}>) =
   const session = await getSession({req});
 
   if (session) {
-    var produtos = db["master@master"].produtos;
+    var produtos = JSON.parse(JSON.stringify(db["master@master"].produtos));
     const { id } = req.query;
     if (req.method === 'PUT') {
       produtos.some(produto => {

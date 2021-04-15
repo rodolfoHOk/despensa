@@ -9,6 +9,10 @@ const FooterWarpper = styled.footer`
   font-size: 12px;
   background-color: #00000033;
   color: #333333;
+
+  @media print {
+    display: none;
+  }
 `;
 
 export default function Footer(){

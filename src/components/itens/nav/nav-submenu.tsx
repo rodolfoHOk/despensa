@@ -5,7 +5,7 @@ import NavItem from './nav-item';
 
 const StyledNavSubMenu = styled.div`
   display: block;
-  background: linear-gradient(90deg,${({theme}) => theme.primaryHover + '33'},${({theme}) => theme.primaryHover + '11'} 50%,transparent);
+  background: linear-gradient(90deg,${({theme}) => theme.primaryHover + '17'},${({theme}) => theme.primaryHover + '08'} 50%,transparent);
   
   ul {
     list-style: none;

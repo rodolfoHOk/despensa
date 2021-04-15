@@ -11,6 +11,8 @@ export default function SideNav({open, sign}:{open: boolean, sign: boolean}){
 
   const [ showCategorias, setShowCategorias ] = useState(false);
   const [ showProdutos, setShowProdutos ] = useState(false);
+  const [ showListas, setShowListas ] = useState(false);
+
 
   const router = useRouter();
 
@@ -39,6 +41,14 @@ export default function SideNav({open, sign}:{open: boolean, sign: boolean}){
               </NavItem>
               <NavItem onClick={() => router.push("/categorias/cadastro")}>
                 🗃 Cadastro <FontAwesomeIcon icon={faLongArrowAltRight}/> 
+              </NavItem>
+            </NavSubMenu>
+            <NavSubMenu label="📜 Listas" open={showListas} onClick={() => setShowListas(!showListas)}>
+              <NavItem onClick={() => router.push("/listas/produtos")}>
+                📋 Estoque <FontAwesomeIcon icon={faLongArrowAltRight}/>
+              </NavItem>
+              <NavItem onClick={() => router.push("/listas/compras")}>
+                🛒 Compras <FontAwesomeIcon icon={faLongArrowAltRight}/>
               </NavItem>
             </NavSubMenu>
           </>

@@ -5,7 +5,7 @@ import { Card } from "../../../src/components/itens/card";
 import { Form } from "../../../src/components/itens/form";
 import FormField from "../../../src/components/itens/form-field";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import { faBroom, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { Table } from "../../../src/components/itens/table";
 import Categoria from "../../../src/screens/categoria/categoria";
 import IconButton from "../../../src/components/itens/icon-button";
@@ -64,6 +64,14 @@ export default function ConsultaCategorias(){
       });
     }
   }
+
+  function limpar(event) {
+    event.preventDefault();
+    setDadosConsulta({
+      nome: ''
+    });
+    event.target.blur();
+  }  
 
   // Tabela Resultado
   const [ showTable, setShowTable ] = useState(false);
@@ -126,6 +134,10 @@ export default function ConsultaCategorias(){
               <Button>
                 <FontAwesomeIcon icon={faSearch} />
                 Consultar
+              </Button>
+              <Button type="button" onClick={(event) => limpar(event)} color="warn">
+                <FontAwesomeIcon icon={faBroom} />
+                Limpar
               </Button>
             </Form.Row>
           </Form>

@@ -19,6 +19,6 @@ export default function CadastroProdutos({categorias}:{categorias: Categoria[]})
 }
 
 export async function getServerSideProps(context) {
-  const categorias = db["master@master"].categorias;
+  const categorias = JSON.parse(JSON.stringify(db["master@master"].categorias));
   return { props: {categorias} }
 }

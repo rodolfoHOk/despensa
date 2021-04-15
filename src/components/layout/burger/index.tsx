@@ -41,6 +41,10 @@ const StyledBurgerButton = styled.button<BurgerProps>`
       transform: ${({open}) => open ? 'rotate(-45deg)' : 'rotate(0)'};
     }
   }
+  
+  @media print {
+    display: none;
+  }
 `;
 
 interface BurgerProps {

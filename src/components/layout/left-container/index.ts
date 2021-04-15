@@ -10,6 +10,10 @@ export const LeftContainer = styled.div<LeftContainerProps>`
     transition: height 0.3s;
     ${({open}) => open ? 'height: auto' : 'height: 0'};
   }
+
+  @media print {
+    display: none;
+  }
 `;
 
 interface LeftContainerProps {

@@ -11,7 +11,7 @@ export default async (req: NextApiRequest, res: NextApiResponse<Categoria | {}>)
   
   if (session) {
     const { id } = req.query;
-    var categorias = db["master@master"].categorias;
+    var categorias = JSON.parse(JSON.stringify(db["master@master"].categorias));
     if (req.method === 'PUT') {
       categorias.some((categoria) => {
         if (categoria.id.toString() === id) {

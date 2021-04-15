@@ -55,6 +55,9 @@ const StyledLoginArea = styled.div`
     }
   }
   
+  @media print {
+    display: none;
+  }
 `;
 
 export default function LoginArea({

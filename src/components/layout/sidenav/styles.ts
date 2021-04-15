@@ -4,6 +4,7 @@ export const StyledSideNav = styled.nav<SideNavProps>`
   display: flex;
   flex-direction: column;
   min-height: calc(100vh - 50px);
+  height: 100%;
   background: ${({theme}) => theme.primaryLight};
   transition: transform 0.3s;
   transform: ${({open}) => open ? 'translateX(0)' : 'translateX(-100%)'};
