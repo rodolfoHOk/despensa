@@ -13,6 +13,14 @@ const HeaderWarpper = styled.header`
     font-weight: bold;
     letter-spacing: 0.15rem;
   }
+
+  @media (max-width: ${({theme}) => theme.mobile}){
+    h1 {
+      margin-top: 13px;
+      font-size: 20px;
+      letter-spacing: 0.05rem;
+    }
+  }
 `;
 
 export default function Header(){

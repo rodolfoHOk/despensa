@@ -5,9 +5,9 @@ import NavItem from '../../itens/nav/nav-item';
 import NavSubMenu from '../../itens/nav/nav-submenu';
 import { useRouter } from 'next/router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowRight, faLongArrowAltRight } from '@fortawesome/free-solid-svg-icons';
+import { faLongArrowAltRight } from '@fortawesome/free-solid-svg-icons';
 
-export default function SideNav({open}){
+export default function SideNav({open, sign}:{open: boolean, sign: boolean}){
 
   const [ showCategorias, setShowCategorias ] = useState(false);
   const [ showProdutos, setShowProdutos ] = useState(false);
@@ -15,29 +15,38 @@ export default function SideNav({open}){
   const router = useRouter();
 
   return(
-    <StyledSideNav open={open} >
+    <StyledSideNav open={open}>
       <ul>
         <NavHeader>Bem-vindo</NavHeader>
         <NavItem onClick={() => router.push('/')}>
           🏠 Home
         </NavItem>
         <NavHeader>Sistema</NavHeader>
-        <NavSubMenu label="📦 Produtos" open={showProdutos} onClick={() => setShowProdutos(!showProdutos)}>
-          <NavItem onClick={() => router.push("/produtos/consulta")}>
-            🔎 Consulta <FontAwesomeIcon icon={faLongArrowAltRight}/>
+        { sign
+          ?
+          <>
+            <NavSubMenu label="📦 Produtos" open={showProdutos} onClick={() => setShowProdutos(!showProdutos)}>
+              <NavItem onClick={() => router.push("/produtos/consulta")}>
+                🔎 Consulta <FontAwesomeIcon icon={faLongArrowAltRight}/>
+              </NavItem>
+              <NavItem onClick={() => router.push("/produtos/cadastro")}>
+                🗃 Cadastro <FontAwesomeIcon icon={faLongArrowAltRight}/>
+              </NavItem>
+            </NavSubMenu>
+            <NavSubMenu label="🗂️ Categorias" open={showCategorias} onClick={() => setShowCategorias(!showCategorias)}>
+              <NavItem onClick={() => router.push("/categorias/consulta")}>
+                🔎 Consulta <FontAwesomeIcon icon={faLongArrowAltRight}/>
+              </NavItem>
+              <NavItem onClick={() => router.push("/categorias/cadastro")}>
+                🗃 Cadastro <FontAwesomeIcon icon={faLongArrowAltRight}/> 
+              </NavItem>
+            </NavSubMenu>
+          </>
+          :
+          <NavItem onClick={() => router.push('/auth/signin')}>
+          🔓 Login
           </NavItem>
-          <NavItem onClick={() => router.push("/produtos/cadastro")}>
-            🗃 Cadastro <FontAwesomeIcon icon={faLongArrowAltRight}/>
-          </NavItem>
-        </NavSubMenu>
-        <NavSubMenu label="🗂️ Categorias" open={showCategorias} onClick={() => setShowCategorias(!showCategorias)}>
-          <NavItem onClick={() => router.push("/categorias/consulta")}>
-            🔎 Consulta <FontAwesomeIcon icon={faLongArrowAltRight}/>
-          </NavItem>
-          <NavItem onClick={() => router.push("/categorias/cadastro")}>
-            🗃 Cadastro <FontAwesomeIcon icon={faLongArrowAltRight}/> 
-          </NavItem>
-        </NavSubMenu>
+        }
       </ul>
     </StyledSideNav>
   );

@@ -15,9 +15,18 @@ import Produto from "../../../src/screens/produto/produto";
 import ToastStates from "../../../src/components/itens/toast/toast";
 import Categoria from "../../../src/screens/categoria/categoria";
 import { deleteProduto, getAllProdutos, getProdutos, patchProduto } from "../../../src/services/produtos";
+import db from '../../../db.json';
+import { useSession } from "next-auth/client";
+import Loading from "../../../src/components/itens/loading";
+import Unauthorized from "../../unauthorized";
 
 
 export default function ConsultaProdutos({categorias}:{categorias: Categoria[]}) {
+  const [ session, loading ] = useSession();
+
+  if (loading) return <Loading/>
+
+  if (!loading && !session) return <Unauthorized/>
 
   const router = useRouter();
 
@@ -254,12 +263,9 @@ export default function ConsultaProdutos({categorias}:{categorias: Categoria[]})
   );
 }
 
-import db from '../../../db.json';
-export async function getServerSideProps(context){
-  
-  const categorias = db["master@master"].categorias;
-  // const nomesCategorias = list.map(item => item['nome']);
 
+export async function getServerSideProps(context){
+  const categorias = db["master@master"].categorias;
   return {
     props: { categorias }
   }

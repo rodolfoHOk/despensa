@@ -5,14 +5,21 @@ import ProdutoFormScreen from "../../../src/screens/produto";
 import Produto from "../../../src/screens/produto/produto";
 import Categoria from "../../../src/screens/categoria/categoria";
 import { getProdutoPorId } from "../../../src/services/produtos";
+import db from '../../../db.json';
+import { useSession } from "next-auth/client";
+import Unauthorized from "../../unauthorized";
 
 
 export default function AtualizarProduto({categorias}:{categorias: Categoria[]}) {
+  const [ session, loading ] = useSession();
+
+  if (loading) return <Loading/>
+
+  if (!loading && !session) return <Unauthorized/>
   
   const router = useRouter();
 
-  const [ loading , setLoading ] = useState(true);
-
+  const [ loadingData , setLoadingData ] = useState(true);
   const [ produtoToUpdate, setProdutoToUpdate ] = useState<Produto>({
     id: 0,
     nome: '',
@@ -27,7 +34,7 @@ export default function AtualizarProduto({categorias}:{categorias: Categoria[]})
       .then(response => {
         if(response.status === 200){
           setProdutoToUpdate(response.data);
-          setLoading(false);
+          setLoadingData(false);
         }
       }).catch(error => {
         console.log(error);
@@ -35,7 +42,7 @@ export default function AtualizarProduto({categorias}:{categorias: Categoria[]})
   },[]);
 
   return (
-    loading
+    loadingData
     ?
     <Loading/>
     :
@@ -43,10 +50,8 @@ export default function AtualizarProduto({categorias}:{categorias: Categoria[]})
   );
 }
 
-import db from '../../../db.json';
-export async function getServerSideProps(context) {
-  
-  const categorias = db["master@master"].categorias;
 
+export async function getServerSideProps(context) {
+  const categorias = db["master@master"].categorias;
   return { props: {categorias} }
 }

@@ -13,9 +13,17 @@ import Dialog from "../../../src/components/itens/dialog";
 import Toast from "../../../src/components/itens/toast";
 import ToastStates from "../../../src/components/itens/toast/toast";
 import { getAllCategorias, getCategorias, deleteCategoria } from "../../../src/services/categorias";
+import { useSession } from "next-auth/client";
+import Loading from "../../../src/components/itens/loading";
+import Unauthorized from "../../unauthorized";
 
 
 export default function ConsultaCategorias(){
+  const [ session, loading ] = useSession();
+
+  if (loading) return <Loading/>
+
+  if (!loading && !session) return <Unauthorized/>
 
   const router = useRouter();
 
@@ -75,7 +83,11 @@ export default function ConsultaCategorias(){
           setShowDialog(false);
         }
       }).catch (error => {
-        toast("Erro ao tentar deletar categoria", 3000, false);
+        if (error.response.status === 400) {
+          toast(error.response.data.message, 3000, false);
+        }else {
+          toast("Erro ao tentar deletar categoria", 3000, false);
+        }
     });
   }
 
