@@ -6,7 +6,7 @@ import { Form } from "../../components/itens/form";
 import FormField from "../../components/itens/form-field";
 import Toast from "../../components/itens/toast";
 import ToastStates from "../../components/itens/toast/toast";
-import Categoria from "./categoria";
+import Categoria from "../../interface/categoria";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faBroom, faSave, faSync } from "@fortawesome/free-solid-svg-icons";
 import { postCategoria, putCategoria } from "../../services/categorias";

@@ -1,4 +1,4 @@
-import Categoria from "../screens/categoria/categoria";
+import Categoria from "../interface/categoria";
 import apiClient from "./apiClient";
 
 

@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Loading from "../../../src/components/itens/loading";
 import CategoriaFormScreen from "../../../src/screens/categoria";
-import Categoria from "../../../src/screens/categoria/categoria";
+import Categoria from "../../../src/interface/categoria";
 import { getCategoriaById } from "../../../src/services/categorias";
 import Unauthorized from "../../unauthorized";
 

@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import db from '../../../db.json';
-import Produto from "../../../src/screens/produto/produto";
+import Produto from "../../../src/interface/produto";
 import fs from 'fs';
 import { getSession } from "next-auth/client";
 
@@ -9,7 +9,7 @@ export default async (req: NextApiRequest, res: NextApiResponse<Produto[]>) => {
   const session = await getSession({req});
 
   if (session) {
-    const produtos = JSON.parse(JSON.stringify(db["master@master"].produtos));
+    const produtos = JSON.parse(JSON.stringify(db[session.user.email].produtos));
     if (req.method === 'POST') {
       const listaIds = produtos.map(produto => produto['id']);
       const proximoId = Math.max(...listaIds) + 1;
@@ -17,7 +17,7 @@ export default async (req: NextApiRequest, res: NextApiResponse<Produto[]>) => {
       produto.id = proximoId;
       produto.minimo = parseFloat(produto.minimo);
       produto.quantidade = parseFloat(produto.quantidade);
-      db["master@master"].produtos.push(produto);
+      db[session.user.email].produtos.push(produto);
       fs.writeFileSync('/media/rodolfo/Repositorio/Programacao/linux/react-workspace/despensa/db.json', JSON.stringify(db));
       res.status(201).json(produto);
     } else {

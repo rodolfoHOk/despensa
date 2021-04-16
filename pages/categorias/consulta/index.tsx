@@ -7,7 +7,7 @@ import FormField from "../../../src/components/itens/form-field";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBroom, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { Table } from "../../../src/components/itens/table";
-import Categoria from "../../../src/screens/categoria/categoria";
+import Categoria from "../../../src/interface/categoria";
 import IconButton from "../../../src/components/itens/icon-button";
 import Dialog from "../../../src/components/itens/dialog";
 import Toast from "../../../src/components/itens/toast";

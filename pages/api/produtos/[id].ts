@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import Produto from "../../../src/screens/produto/produto";
+import Produto from "../../../src/interface/produto";
 import db from '../../../db.json';
 import fs from 'fs';
 import { getSession } from "next-auth/client";
@@ -9,7 +9,7 @@ export default async (req: NextApiRequest, res: NextApiResponse<Produto | {}>) =
   const session = await getSession({req});
 
   if (session) {
-    var produtos = JSON.parse(JSON.stringify(db["master@master"].produtos));
+    var produtos = JSON.parse(JSON.stringify(db[session.user.email].produtos));
     const { id } = req.query;
     if (req.method === 'PUT') {
       produtos.some(produto => {
@@ -21,7 +21,7 @@ export default async (req: NextApiRequest, res: NextApiResponse<Produto | {}>) =
           return true;
         }
       });
-      db["master@master"].produtos = produtos;
+      db[session.user.email].produtos = produtos;
       fs.writeFileSync('/media/rodolfo/Repositorio/Programacao/linux/react-workspace/despensa/db.json', JSON.stringify(db));
       res.status(200).json({});
     } else if (req.method === 'PATCH') {
@@ -31,7 +31,7 @@ export default async (req: NextApiRequest, res: NextApiResponse<Produto | {}>) =
           return true;
         }
       });
-      db["master@master"].produtos = produtos;
+      db[session.user.email].produtos = produtos;
       fs.writeFileSync('/media/rodolfo/Repositorio/Programacao/linux/react-workspace/despensa/db.json', JSON.stringify(db));
       res.status(200).json({});
     } else if (req.method === 'DELETE') {

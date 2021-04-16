@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components';
-import Categoria from '../../../screens/categoria/categoria';
+import Categoria from '../../../interface/categoria';
 
 interface FormFieldProps {
   width?: string;

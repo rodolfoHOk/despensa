@@ -1,4 +1,4 @@
-import Produto from "../screens/produto/produto";
+import Produto from "../interface/produto";
 import apiClient from "./apiClient";
 
 const url = '/produtos'

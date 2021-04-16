@@ -11,12 +11,12 @@ import Dialog from "../../../src/components/itens/dialog";
 import Toast from "../../../src/components/itens/toast";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBroom, faSearch } from "@fortawesome/free-solid-svg-icons";
-import Produto from "../../../src/screens/produto/produto";
+import Produto from "../../../src/interface/produto";
 import ToastStates from "../../../src/components/itens/toast/toast";
-import Categoria from "../../../src/screens/categoria/categoria";
+import Categoria from "../../../src/interface/categoria";
 import { deleteProduto, getAllProdutos, getProdutos, patchProduto } from "../../../src/services/produtos";
 import db from '../../../db.json';
-import { useSession } from "next-auth/client";
+import { getSession, useSession } from "next-auth/client";
 import Loading from "../../../src/components/itens/loading";
 import Unauthorized from "../../unauthorized";
 
@@ -277,9 +277,15 @@ export default function ConsultaProdutos({categorias}:{categorias: Categoria[]})
 }
 
 
-export async function getServerSideProps(context){
-  const categorias = JSON.parse(JSON.stringify(db["master@master"].categorias));
+export async function getServerSideProps({req, res}) {
+  const session = await getSession({req});
+
+  if(session && session.user.email) {
+    const categorias = JSON.parse(JSON.stringify(db[session.user.email].categorias));
+    return { props: {categorias} }
+  }
+
   return {
-    props: { categorias }
+    props: {}
   }
 }

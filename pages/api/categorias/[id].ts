@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import db from '../../../db.json';
-import Categoria from "../../../src/screens/categoria/categoria";
+import Categoria from "../../../src/interface/categoria";
 import fs from 'fs';
 import { getSession } from 'next-auth/client';
 
@@ -11,7 +11,7 @@ export default async (req: NextApiRequest, res: NextApiResponse<Categoria | {}>)
   
   if (session) {
     const { id } = req.query;
-    var categorias = JSON.parse(JSON.stringify(db["master@master"].categorias));
+    var categorias = JSON.parse(JSON.stringify(db[session.user.email].categorias));
     if (req.method === 'PUT') {
       categorias.some((categoria) => {
         if (categoria.id.toString() === id) {
@@ -20,11 +20,11 @@ export default async (req: NextApiRequest, res: NextApiResponse<Categoria | {}>)
           return true;
         }
       });
-      db["master@master"].categorias = categorias;
+      db[session.user.email].categorias = categorias;
       fs.writeFileSync('/media/rodolfo/Repositorio/Programacao/linux/react-workspace/despensa/db.json', JSON.stringify(db));
       res.status(200).json({});
     } else if (req.method === 'DELETE') {
-      const produtos = db["master@master"].produtos;
+      const produtos = db[session.user.email].produtos;
       const categoria = categorias.find(categoria => categoria.id.toString() === id);
       const temProduto = produtos.findIndex(produto => produto.categoria === categoria.nome);
       if (temProduto > 0) {
@@ -32,7 +32,7 @@ export default async (req: NextApiRequest, res: NextApiResponse<Categoria | {}>)
       } else {
         const index = categorias.findIndex(categoria => categoria.id.toString() === id);
         categorias.splice(index, 1);
-        db["master@master"].categorias = categorias;
+        db[session.user.email].categorias = categorias;
         fs.writeFileSync('/media/rodolfo/Repositorio/Programacao/linux/react-workspace/despensa/db.json', JSON.stringify(db));
         res.status(200).json({});
       }

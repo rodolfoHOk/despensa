@@ -1,12 +1,12 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/client";
 import db from '../../../db.json';
-import Produto from "../../../src/screens/produto/produto";
+import Produto from "../../../src/interface/produto";
 
 export default async (req: NextApiRequest, res: NextApiResponse<Produto[]>) => {
   const session = await getSession({req});
   if (session) {
-    const produtos = JSON.parse(JSON.stringify(db["master@master"].produtos));
+    const produtos = JSON.parse(JSON.stringify(db[session.user.email].produtos));
     const produtosEmEstoque = produtos.filter(produto => produto.quantidade > 0);
     let produtosEmEstoqueOrdenado: Produto[];
     if(produtosEmEstoque.length > 1) {

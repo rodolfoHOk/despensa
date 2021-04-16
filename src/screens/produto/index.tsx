@@ -5,11 +5,11 @@ import { Card } from "../../../src/components/itens/card";
 import { Form } from "../../../src/components/itens/form";
 import FormField from "../../../src/components/itens/form-field";
 import Toast from "../../../src/components/itens/toast";
-import Produto from "./produto";
+import Produto from "../../interface/produto";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSave, faSync, faArrowLeft, faBroom } from '@fortawesome/free-solid-svg-icons';
 import ToastStates from "../../components/itens/toast/toast";
-import Categoria from "../categoria/categoria";
+import Categoria from "../../interface/categoria";
 import { postProduto, putProduto } from "../../services/produtos";
 
 export default function ProdutoFormScreen({produtoToUpdate, categorias}:

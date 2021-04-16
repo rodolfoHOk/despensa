@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import Categoria from "../../../src/screens/categoria/categoria";
+import Categoria from "../../../src/interface/categoria";
 import db from '../../../db.json';
 import fs from 'fs';
 import { getSession } from "next-auth/client";
@@ -9,13 +9,13 @@ export default async (req: NextApiRequest, res: NextApiResponse<Categoria[]>) =>
   const session = await getSession({req});
 
   if (session) {
-    const categorias = JSON.parse(JSON.stringify(db["master@master"].categorias));
+    const categorias = JSON.parse(JSON.stringify(db[session.user.email].categorias));
     if (req.method === 'POST') {
       const listaIds = categorias.map(categoria => categoria['id']);
       const proximoId = Math.max(...listaIds) + 1;
       let categoria = req.body;
       categoria.id = proximoId;
-      db["master@master"].categorias.push(categoria);
+      db[session.user.email].categorias.push(categoria);
       fs.writeFileSync('/media/rodolfo/Repositorio/Programacao/linux/react-workspace/despensa/db.json', JSON.stringify(db));
       res.status(201).json(categoria);
     } else {

@@ -1,7 +1,7 @@
 import { List } from "../../../src/components/layout/list";
 import db from '../../../db.json';
-import Produto from "../../../src/screens/produto/produto";
-import { useSession } from "next-auth/client";
+import Produto from "../../../src/interface/produto";
+import { getSession, useSession } from "next-auth/client";
 import Loading from "../../../src/components/itens/loading";
 import Unauthorized from "../../unauthorized";
 import { Button } from "../../../src/components/itens/button";
@@ -44,7 +44,9 @@ export default function ListaCompras({ produtos }){
   );
 }
 
-export async function getServerSideProps(context) {
+export async function getServerSideProps({req, res}) {
+  var session = await getSession({req});
+
   function ordenar(produtos : Produto[]) {
     produtos.sort(function (a: Produto, b: Produto) {
       var c1 = a['categoria'].toLowerCase();
@@ -62,16 +64,22 @@ export async function getServerSideProps(context) {
     return produtos;
   }
   
-  const listaProdutos = JSON.parse(JSON.stringify(db["master@master"].produtos));
-  const produtosEmFalta = listaProdutos.filter(produto => produto.quantidade < produto.minimo);
-  let produtos;
-  if(produtosEmFalta.length > 1) {
-    produtos = ordenar(produtosEmFalta);
-  } else {
-    produtos = produtosEmFalta;
+  if (session && session.user.email) {
+    const listaProdutos = JSON.parse(JSON.stringify(db[session.user.email].produtos));
+    const produtosEmFalta = listaProdutos.filter(produto => produto.quantidade < produto.minimo);
+    let produtos;
+    if(produtosEmFalta.length > 1) {
+      produtos = ordenar(produtosEmFalta);
+    } else {
+      produtos = produtosEmFalta;
+    }
+    
+    return {
+      props: { produtos }
+    }
   }
 
   return {
-    props: { produtos }
+    props: {}
   }
 }

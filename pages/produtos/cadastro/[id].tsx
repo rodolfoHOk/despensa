@@ -2,11 +2,11 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import Loading from "../../../src/components/itens/loading";
 import ProdutoFormScreen from "../../../src/screens/produto";
-import Produto from "../../../src/screens/produto/produto";
-import Categoria from "../../../src/screens/categoria/categoria";
+import Produto from "../../../src/interface/produto";
+import Categoria from "../../../src/interface/categoria";
 import { getProdutoPorId } from "../../../src/services/produtos";
 import db from '../../../db.json';
-import { useSession } from "next-auth/client";
+import { getSession, session, useSession } from "next-auth/client";
 import Unauthorized from "../../unauthorized";
 
 
@@ -51,7 +51,15 @@ export default function AtualizarProduto({categorias}:{categorias: Categoria[]})
 }
 
 
-export async function getServerSideProps(context) {
-  const categorias = JSON.parse(JSON.stringify(db["master@master"].categorias));
-  return { props: {categorias} }
+export async function getServerSideProps({req, res}) {
+  const session = await getSession({req});
+
+  if(session && session.user.email) {
+    const categorias = JSON.parse(JSON.stringify(db[session.user.email].categorias));
+    return { props: {categorias} }
+  }
+
+  return {
+    props: {}
+  }
 }
