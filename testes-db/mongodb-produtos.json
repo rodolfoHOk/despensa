@@ -1,0 +1,20 @@
+[
+	{"usuario":"master@master","nome":"Abacaxi","categoria":"Frutas","minimo":1,"quantidade":2},
+	{"usuario":"master@master","nome":"Banana","categoria":"Frutas","minimo":6,"quantidade":4},
+	{"usuario":"master@master","nome":"Alcatra","categoria":"Carnes","minimo":0.5,"quantidade":1},
+	{"usuario":"master@master","nome":"Frango inteiro","categoria":"Carnes","minimo":0.5,"quantidade":2.3},
+	{"usuario":"master@master","nome":"Ervilha","categoria":"Enlatados","minimo":0,"quantidade":1},
+	{"usuario":"master@master","nome":"Arroz","categoria":"Grãos","minimo":1,"quantidade":0},
+	{"usuario":"master@master","nome":"Maça","categoria":"Frutas","minimo":3,"quantidade":6},
+	{"usuario":"master@master","nome":"Alface","categoria":"Vegetais","minimo":2,"quantidade":1},
+	{"usuario":"master@master","nome":"Bis","categoria":"Doces","minimo":0,"quantidade":2},
+	{"usuario":"rodolfo.okino@gmail.com","nome":"Abacaxi","categoria":"Frutas","minimo":1,"quantidade":2},
+	{"usuario":"rodolfo.okino@gmail.com","nome":"Banana","categoria":"Frutas","minimo":6,"quantidade":4},
+	{"usuario":"rodolfo.okino@gmail.com","nome":"Alcatra","categoria":"Carnes","minimo":0.5,"quantidade":1},
+	{"usuario":"rodolfo.okino@gmail.com","nome":"Frango inteiro","categoria":"Carnes","minimo":0.5,"quantidade":2.3},
+	{"usuario":"rodolfo.okino@gmail.com","nome":"Ervilha","categoria":"Enlatados","minimo":0,"quantidade":1},
+	{"usuario":"rodolfo.okino@gmail.com","nome":"Arroz","categoria":"Grãos","minimo":1,"quantidade":0},
+	{"usuario":"rodolfo.okino@gmail.com","nome":"Maça","categoria":"Frutas","minimo":3,"quantidade":6},
+	{"usuario":"rodolfo.okino@gmail.com","nome":"Alface","categoria":"Vegetais","minimo":2,"quantidade":1},
+	{"usuario":"rodolfo.okino@gmail.com","nome":"Bis","categoria":"Doces","minimo":0,"quantidade":2}
+]

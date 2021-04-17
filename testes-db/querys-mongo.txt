@@ -1,0 +1,79 @@
+// Comandos e querys do mongodb
+// obs: mongoimport é um comando de prompt os outros são querys feitas dentro do comando mongo;
+
+// import json to db despensa
+// mongoimport --db dbName --collection collectionName --file fileName.json --jsonArray
+mongoimport --db despensa --collection categorias --file mongodb-categorias.json --jsonArray
+mongoimport --db despensa --collection produtos  --file mongodb-produtos.json --jsonArray
+
+
+// criar um index único - no exemplo abaixo email como indíce único da coleção usuarios.
+db.usuarios.createIndex( { "email": 1 }, { unique: true } );
+
+
+// exemplo encontrar todas categorias do usuario
+db.categorias.find({usuario: "master@master"})
+
+// exemplo encontrar categoria do usuario pelo nome
+db.categorias.find({usuario: "master@master", nome: "Doces"})
+
+// exemplo encontrar todos produtos do usuario
+db.produtos.find({usuario : "master@master"})
+
+// exemplo encontrar produtos do usuario pela categoria
+db.produtos.find({usuario: "master@master", categoria: "Frutas"})
+// ignore case
+db.produtos.find({usuario: "master@master", categoria: { $regex : /frutas/i}})
+db.produtos.find({usuario: "master@master", categoria: /^frutas$/i})
+
+// exemplo encontrar produto do usuario pelo nome
+db.produtos.find({usuario: "master@master", nome: "Bis"})
+// ignore case
+db.produtos.find({usuario: "master@master", nome: /^bis$/i})
+db.produtos.find({usuario: "master@master", nome: { $regex : /bis/i }})
+// includes e ignore case
+db.produtos.find({usuario: "master@master", nome: /.*al.*/i})
+db.produtos.find({usuario: "master@master", nome: { $regex : /.*al.*/i }})
+db.produtos.find({usuario: "master@master", nome: /.*ca.*/i})
+db.produtos.find({usuario: "master@master", nome: { $regex : /.*ca.*/i }})
+
+// exemplo encontrar produtos quantidade maior que 0 / maior ou igual a 0
+db.produtos.find({usuario: "master@master", quantidade: {$gt: 0}})
+db.produtos.find({usuario: "master@master", quantidade: {$gte: 0}})
+
+// exemplo encontrar produtos quantidade menor  que 2 / menor ou igual a 2
+db.produtos.find({usuario: "master@master", quantidade: {$lt: 2}})
+db.produtos.find({usuario: "master@master", quantidade: {$lte: 2}})
+
+// outras opções: 
+// $eq igual,
+// $ne diferente,
+// $in contido em ex: {quantidade: {$in: [ 4, 6] }},
+// $all em campos com array contem uma ou mais das opções ex: {tags: {$all: [“NodeJS”, “Android”]}}
+
+
+// exemplo ordenar produtos do usuario por nome
+db.produtos.find({usuario: "master@master"}).sort({nome :  1})
+// exemplo ordenar decrescente produtos do usuario por nome
+db.produtos.find({usuario: "master@master"}).sort({nome :  -1})
+
+
+// exemplo inserir produto
+db.produtos.insert({"usuario" : "master@master", "nome" : "Bolacha recheada chocolate", "categoria" : "Doces", "minimo" : 0, "quantidade" : 2})
+
+
+// exemplo atualizar produto
+db.produtos.updateOne({ _id: ObjectId("607b1893bc4252cb5709938b")}, { $set: { "usuario": "master@master", "nome": "Bolacha recheada chocolate", "categoria": "Doces", "minimo": 1, "quantidade": 1}})
+
+// exemplo atualizar quantidade produto
+db.produtos.updateOne({ _id: ObjectId("607b1893bc4252cb5709938b")}, { $set: { "quantidade": 2}})
+
+// outras opções úteis: 
+// $unset: remove o respectivo campo do documento;
+// $inc: incrementa o valor original do campo com o valor especificado;
+// $mul: multiplica o valor original do campo com o valor especificado;
+// $rename: muda o nome do campo para o nome especificado;
+
+
+// exemplo deletar produto
+db.produtos.deleteOne({ _id: ObjectId("607b1893bc4252cb5709938b")})
