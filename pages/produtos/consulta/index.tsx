@@ -15,15 +15,14 @@ import Produto from "../../../src/interface/produto";
 import ToastStates from "../../../src/components/itens/toast/toast";
 import Categoria from "../../../src/interface/categoria";
 import { deleteProduto, getAllProdutos, getProdutos, patchProduto } from "../../../src/services/produtos";
-import db from '../../../db.json';
 import { getSession, useSession } from "next-auth/client";
 import Loading from "../../../src/components/itens/loading";
 import Unauthorized from "../../unauthorized";
+import { connectToDatabase } from "../../../src/utils/mongodb";
 
 
 export default function ConsultaProdutos({categorias}:{categorias: Categoria[]}) {
   const [ session, loading ] = useSession();
-
   if (loading) return <Loading/>
 
   if (!loading && !session) return <Unauthorized/>
@@ -41,7 +40,7 @@ export default function ConsultaProdutos({categorias}:{categorias: Categoria[]})
   const [ showTable, setShowTable ] = useState(false);
   const [ selectedProduto, setSelectedProduto ] = useState({
     index: 0,
-    id: 0,
+    _id: '',
     novaQtd: 0,
   });
   const [ showDeleteDialog, setShowDeleteDialog ] = useState(false);
@@ -103,20 +102,20 @@ export default function ConsultaProdutos({categorias}:{categorias: Categoria[]})
   }  
   
   // Funções Tabela
-  function changeQuantidade(event, index, id){
+  function changeQuantidade(event, index, _id){
     const valor = event.target.value;
     if (valor < 0) {
       toast('Quantidade não pode ser menor que zero.', 3000, false);
     } else if ( valor > 999) {
       toast('Quantidade não pode ser maior de 999.', 3000, false);
     } else {
-      setSelectedProduto({index: index, id: id, novaQtd: parseFloat(valor)});
+      setSelectedProduto({index: index, _id: _id, novaQtd: parseFloat(valor)});
     }
   }
 
-  function updateQuantidade(id: number){
-    if(id === selectedProduto.id) {
-      patchProduto(selectedProduto.id, selectedProduto.novaQtd)
+  function updateQuantidade(_id: string){
+    if(_id === selectedProduto._id) {
+      patchProduto(selectedProduto._id, selectedProduto.novaQtd)
         .then(response => {
           if (response.status === 200) {
             let novoProdutos = produtos;
@@ -133,7 +132,7 @@ export default function ConsultaProdutos({categorias}:{categorias: Categoria[]})
   }
 
   function removerProduto() {
-    deleteProduto(selectedProduto.id)
+    deleteProduto(selectedProduto._id)
       .then(response => {
         toast("Produto deletado com sucesso.", 2000, true);
         let novoProdutos = produtos;
@@ -209,7 +208,7 @@ export default function ConsultaProdutos({categorias}:{categorias: Categoria[]})
               { 
               produtos.map((produto, index) => (
                 <tr id={`id_${index}`} key={`key_${index}`}>
-                  <td>{produto.id}</td>
+                  <td>{produto._id}</td>
                   <td>{produto.nome}</td>
                   <td>{produto.categoria}</td>
                   <td>{produto.minimo}</td>
@@ -219,12 +218,12 @@ export default function ConsultaProdutos({categorias}:{categorias: Categoria[]})
                       type="number"
                       min="0"
                       max="999"
-                      onChange={(event) => changeQuantidade(event, index, produto.id)}
+                      onChange={(event) => changeQuantidade(event, index, produto._id)}
                     />
                     <IconButton
                       id={`qtd-edit_${index}`}
                       tooltip="atualizar"
-                      onClick={() => updateQuantidade(produto.id)}>
+                      onClick={() => updateQuantidade(produto._id)}>
                       ✔️
                     </IconButton>
                   </td>
@@ -232,14 +231,14 @@ export default function ConsultaProdutos({categorias}:{categorias: Categoria[]})
                     <IconButton 
                       id={`edit_${index}`}
                       tooltip="editar"
-                      onClick={() => router.push(`/produtos/cadastro/${produto.id}`)}>
+                      onClick={() => router.push(`/produtos/cadastro/${produto._id}`)}>
                       ✏️
                     </IconButton>
                     <IconButton 
                       id={`delete_${index}`}
                       tooltip="deletar"
                       onClick={() => {
-                      setSelectedProduto({index: index, id: produto.id, novaQtd: 0});
+                      setSelectedProduto({index: index, _id: produto._id, novaQtd: 0});
                       setShowDeleteDialog(true);
                     }}>
                       🗑️
@@ -259,7 +258,7 @@ export default function ConsultaProdutos({categorias}:{categorias: Categoria[]})
       <Dialog
         show={showDeleteDialog}
         title="Confirma a exclusão"
-        message={`Você confirma a deleção do produto com o id: ${selectedProduto.id}?`}
+        message={`Você confirma a deleção do produto com o id: ${selectedProduto._id}?`}
         onConfirm={() => removerProduto()}
         onCancel={() => setShowDeleteDialog(false)}
       />
@@ -281,8 +280,14 @@ export async function getServerSideProps({req, res}) {
   const session = await getSession({req});
 
   if(session && session.user.email) {
-    const categorias = JSON.parse(JSON.stringify(db[session.user.email].categorias));
-    return { props: {categorias} }
+    const { client, db } = await connectToDatabase();
+    var categorias: Categoria[];
+    if (client.isConnected ) {
+      categorias = JSON.parse(JSON.stringify(await db.collection('categorias')
+        .find({usuario : session.user.email},{projection: {usuario: 0 }})
+        .toArray()));
+      return { props: {categorias} }
+    }
   }
 
   return {

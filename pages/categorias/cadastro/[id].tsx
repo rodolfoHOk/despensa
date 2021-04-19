@@ -20,15 +20,15 @@ export default function AtualizarCategoria(){
   const [ loadingData, setLoadingData ] = useState(true);
 
   const [ categoria, setCategoria ] = useState<Categoria>({
-    id: 0,
+    _id: '',
     nome: '',
     emoji: ''
   });
 
   useEffect(() => {
     const { id } = router.query;
-    if (id.length === 1){
-      getCategoriaById(parseInt(id[0]))
+    if (id){
+      getCategoriaById(id.toString())
         .then(response => {
           if (response.status === 200) {
             setCategoria(response.data);

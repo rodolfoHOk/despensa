@@ -18,14 +18,13 @@ export default function SignIn({provedores}:{provedores: Record<string, AppProvi
             router.push('/');
           } else {
             postUsuario({email: session.user.email})
-            .then(response => {
-              console.log(response);
-              if (response.status === 201) {
-                router.push('/');
-              }
-            }).catch(error => {
+              .then(response => {
+                if (response.status === 201) {
+                  router.push('/');
+                }
+              }).catch(error => {
               console.log(error.response.data);
-          });
+            });
           }
         }).catch(error => {
           console.log(error.response.data);

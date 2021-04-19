@@ -20,14 +20,14 @@ export function postCategoria(categoria: Categoria){
   return apiClient.post(url, categoria);
 }
 
-export function getCategoriaById(id: number){
-  return apiClient.get(`${url}/${id}`);
+export function getCategoriaById(_id: string){
+  return apiClient.get(`${url}/${_id}`);
 }
 
-export function putCategoria(id: number, categoria: Categoria){
-  return apiClient.put(`${url}/${id}`, categoria);
+export function putCategoria(_id: string, categoria: Categoria){
+  return apiClient.put(`${url}/${_id}`, categoria);
 }
 
-export function deleteCategoria(id: number) {
-  return apiClient.delete(`${url}/${id}`);
+export function deleteCategoria(_id: string) {
+  return apiClient.delete(`${url}/${_id}`);
 }

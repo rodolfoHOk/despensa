@@ -126,7 +126,7 @@ export default function FormField(
         <datalist id={`suggestionFor_${fieldId}`}>
           {
             suggestions.map(suggestion => (
-              <option value={suggestion.nome} key={`suggestionFor_${fieldId}_option_${suggestion.id}`}>
+              <option value={suggestion.nome} key={`suggestionFor_${fieldId}_option_${suggestion._id}`}>
                 {suggestion.emoji + ' ' + suggestion.nome}
               </option>
             ))

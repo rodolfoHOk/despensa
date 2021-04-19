@@ -76,14 +76,14 @@ export default function ConsultaCategorias(){
   // Tabela Resultado
   const [ showTable, setShowTable ] = useState(false);
   const [ resultadoSelecionado, setResultadoSelecionado ] = useState<Categoria>({
-    id: 0,
+    _id: '',
     nome: '',
     emoji: ''
   });
   const [ deleteIndex, setDeleteIndex ] = useState(0);
 
   function removeCategoria(){
-    deleteCategoria(resultadoSelecionado.id)
+    deleteCategoria(resultadoSelecionado._id)
       .then(response => {
         if (response.status === 200) {
           resultados.splice(deleteIndex, 1);
@@ -162,14 +162,14 @@ export default function ConsultaCategorias(){
               <tbody>
                 { resultados.map((resultado, index) => (
                   <tr id={`id_${index}`} key={`key_${index}`}>
-                    <td>{resultado.id}</td>
+                    <td>{resultado._id}</td>
                     <td>{resultado.emoji}</td>
                     <td>{resultado.nome}</td>
                     <td>
                       <IconButton
                         id={`edit_${index}`}
                         tooltip="editar"
-                        onClick={() => router.push(`/categorias/cadastro/${resultado.id}`)}
+                        onClick={() => router.push(`/categorias/cadastro/${resultado._id}`)}
                       >
                         ✏️
                       </IconButton>
@@ -177,7 +177,7 @@ export default function ConsultaCategorias(){
                         id={`delete_${index}`}
                         tooltip="deletar"
                         onClick={() => {
-                          setResultadoSelecionado({id: resultado.id, nome: resultado.nome, emoji: resultado.emoji});
+                          setResultadoSelecionado({_id: resultado._id, nome: resultado.nome, emoji: resultado.emoji});
                           setDeleteIndex(index);
                           setShowDialog(true);
                         }}
@@ -196,7 +196,7 @@ export default function ConsultaCategorias(){
       <Dialog
         show={showDialog}
         title="Confirma a exclusão"
-        message={`Você confirma a exclusão da categoria de id: ${resultadoSelecionado.id}`}
+        message={`Você confirma a exclusão da categoria de id: ${resultadoSelecionado._id}`}
         onConfirm={() => removeCategoria()}
         onCancel={() => setShowDialog(false)}
       />

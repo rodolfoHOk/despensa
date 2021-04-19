@@ -20,7 +20,7 @@ export default function CategoriaFormScreen({categoriaToUpdate}:{categoriaToUpda
   const [ isUpdate, setIsUpdate ] = useState(false);
 
   const [ categoria, setCategoria ] = useState<Categoria>({
-    id: 0,
+    _id: '',
     nome: '',
     emoji: '',
   });
@@ -30,7 +30,7 @@ export default function CategoriaFormScreen({categoriaToUpdate}:{categoriaToUpda
     const isValid = formIsValid();
     if(isValid.valid) {
       if(isUpdate) {
-        putCategoria(categoria.id, categoria)
+        putCategoria(categoria._id, categoria)
           .then(response => {
             if (response.status === 200) {
               toast("Categoria atualizada com sucesso", 3000, true);
@@ -57,7 +57,7 @@ export default function CategoriaFormScreen({categoriaToUpdate}:{categoriaToUpda
   function limpar(event) {
     event.preventDefault();
     setCategoria({
-      id: 0,
+      _id: '',
       nome: '',
       emoji: ''
     })
@@ -109,7 +109,7 @@ export default function CategoriaFormScreen({categoriaToUpdate}:{categoriaToUpda
   useEffect(() => {
     if (categoriaToUpdate) {
       setCategoria({
-        id: categoriaToUpdate.id,
+        _id: categoriaToUpdate._id,
         nome: categoriaToUpdate.nome,
         emoji: categoriaToUpdate.emoji
       });
@@ -131,8 +131,8 @@ export default function CategoriaFormScreen({categoriaToUpdate}:{categoriaToUpda
                 <FormField 
                   label="ID"
                   name="id"
-                  type="number"
-                  value={categoria.id}
+                  type="text"
+                  value={categoria._id}
                   onChange={null}
                   disabled={true}
                 />

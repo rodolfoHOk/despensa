@@ -3,7 +3,7 @@ import Loading from "../../../src/components/itens/loading";
 import Unauthorized from "../../unauthorized";
 import ProdutoFormScreen from "../../../src/screens/produto";
 import Categoria from "../../../src/interface/categoria";
-import db from '../../../db.json';
+import { connectToDatabase } from "../../../src/utils/mongodb";
 
 
 export default function CadastroProdutos({categorias}:{categorias: Categoria[]}) {
@@ -23,8 +23,14 @@ export async function getServerSideProps({req, res}) {
   const session = await getSession({req});
 
   if(session && session.user.email) {
-    const categorias = JSON.parse(JSON.stringify(db[session.user.email].categorias));
-    return { props: {categorias} }
+    const { client, db } = await connectToDatabase();
+    var categorias: Categoria[];
+    if (client.isConnected ) {
+      categorias = JSON.parse(JSON.stringify(await db.collection('categorias')
+        .find({usuario : session.user.email},{projection: {usuario: 0}})
+        .toArray()));
+      return { props: {categorias} }
+    }
   }
 
   return {

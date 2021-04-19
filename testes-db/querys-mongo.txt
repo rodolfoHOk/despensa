@@ -5,10 +5,11 @@
 // mongoimport --db dbName --collection collectionName --file fileName.json --jsonArray
 mongoimport --db despensa --collection categorias --file mongodb-categorias.json --jsonArray
 mongoimport --db despensa --collection produtos  --file mongodb-produtos.json --jsonArray
+mongoimport --db despensa --collection usuarios  --file mongodb-usuarios.json --jsonArray
 
 
 // criar um index único - no exemplo abaixo email como indíce único da coleção usuarios.
-db.usuarios.createIndex( { "email": 1 }, { unique: true } );
+db.usuarios.createIndex( { "usuario": 1 }, { unique: true } );
 
 
 // exemplo encontrar todas categorias do usuario

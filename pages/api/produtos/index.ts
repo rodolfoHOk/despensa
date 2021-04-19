@@ -1,44 +1,54 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import db from '../../../db.json';
 import Produto from "../../../src/interface/produto";
-import fs from 'fs';
 import { getSession } from "next-auth/client";
+import { connectToDatabase } from "../../../src/utils/mongodb";
+import ProdutoComUsuario from "../../../src/interface/produto-usuario";
+import { FilterQuery, FindOneOptions } from "mongodb";
 
-export default async (req: NextApiRequest, res: NextApiResponse<Produto[]>) => {
-  
+
+export default async (req: NextApiRequest, res: NextApiResponse<Produto[]|{message: string}>) => {
   const session = await getSession({req});
 
-  if (session) {
-    const produtos = JSON.parse(JSON.stringify(db[session.user.email].produtos));
-    if (req.method === 'POST') {
-      const listaIds = produtos.map(produto => produto['id']);
-      const proximoId = Math.max(...listaIds) + 1;
-      let produto = req.body;
-      produto.id = proximoId;
-      produto.minimo = parseFloat(produto.minimo);
-      produto.quantidade = parseFloat(produto.quantidade);
-      db[session.user.email].produtos.push(produto);
-      fs.writeFileSync('/media/rodolfo/Repositorio/Programacao/linux/react-workspace/despensa/db.json', JSON.stringify(db));
-      res.status(201).json(produto);
-    } else {
-      const params = req.query;
-      if (JSON.stringify(params) === JSON.stringify({})) {
-        res.status(200).json(produtos);
-      } else {
-        var listaFiltrada = [];
-        if (params.categoria) {
-          listaFiltrada = produtos.filter(produto => produto.categoria === params.categoria);
-          if (params.nome) {
-            listaFiltrada = listaFiltrada.filter(produto => produto.nome.toLowerCase().includes(params.nome.toString().toLowerCase()));
-          }
-        } else if (params.nome) {
-          listaFiltrada = produtos.filter(produto => produto.nome.toLowerCase().includes(params.nome.toString().toLowerCase()));
+  if (session && session.user.email) {
+    const { client, db } = await connectToDatabase();
+    if (client.isConnected) {
+      
+      if (req.method === 'POST') {
+        let produto: Partial<ProdutoComUsuario> = {};
+        produto.usuario = session.user.email;
+        produto.nome = req.body.nome;
+        produto.categoria = req.body.categoria;
+        produto.minimo = parseFloat(req.body.minimo);
+        produto.quantidade = parseFloat(req.body.quantidade);
+        const produtoOk = (await db.collection('produtos')
+          .insertOne( produto )).result.ok;
+        if (produtoOk === 1) {
+          res.status(201).json({message: 'Produto cadastrado com sucesso'});
+        } else {
+          res.status(500).json({message: 'Erro ao tentar cadastrar o produto'});
         }
-        res.status(200).json(listaFiltrada);
+      
+      } else {
+        const params = req.query;
+        var filterQuery: FilterQuery<ProdutoComUsuario> = {};
+        filterQuery.usuario = session.user.email;
+        if (params.categoria) {
+          filterQuery.categoria = new RegExp(params.categoria.toString(), 'i');
+        }
+        if (params.nome) {
+          filterQuery.nome = new RegExp(`.*${params.nome}.*`, 'i');
+        }
+        const projection: FindOneOptions<ProdutoComUsuario> = { projection: { usuario : 0 }};
+        const produtos: Produto[] = await db.collection('produtos')
+          .find(filterQuery, projection).toArray();
+        res.status(200).json(produtos);
       }
+    
+    } else {
+      res.status(500).json({message : 'Ocorreu um erro, tente novamente mais tarde'});
     }
   } else {
-    res.status(401).json([]);
+    res.status(401).json({message: 'Não autorizado'});
   }
   res.end();
 }

@@ -20,18 +20,18 @@ export function postProduto(produto: Produto) {
   return apiClient.post(url, produto);
 }
 
-export function getProdutoPorId(id: number) {
-  return apiClient.get(`${url}/${id}`);
+export function getProdutoPorId(_id: string) {
+  return apiClient.get(`${url}/${_id}`);
 }
 
-export function putProduto(id: number, produto: Produto) {
-  return apiClient.put(`${url}/${id}`, produto);
+export function putProduto(_id: string, produto: Produto) {
+  return apiClient.put(`${url}/${_id}`, produto);
 }
 
-export function deleteProduto(id: number) {
-  return apiClient.delete(`${url}/${id}`);
+export function deleteProduto(_id: string) {
+  return apiClient.delete(`${url}/${_id}`);
 }
 
-export function patchProduto(id: number, quantidade: number) {
-  return apiClient.patch(`${url}/${id}`, {quantidade: quantidade});
+export function patchProduto(_id: string, quantidade: number) {
+  return apiClient.patch(`${url}/${_id}`, {quantidade: quantidade});
 }

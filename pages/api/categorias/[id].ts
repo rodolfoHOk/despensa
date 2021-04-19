@@ -1,47 +1,53 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import db from '../../../db.json';
 import Categoria from "../../../src/interface/categoria";
-import fs from 'fs';
 import { getSession } from 'next-auth/client';
+import { connectToDatabase } from "../../../src/utils/mongodb";
+import mongo from 'mongodb';
+import CategoriaComUsuario from "../../../src/interface/categoria-usuario";
 
 
-export default async (req: NextApiRequest, res: NextApiResponse<Categoria | {}>) => {
-  
+export default async (req: NextApiRequest, res: NextApiResponse<Categoria|{message: string}>) => {
   const session = await getSession({req});
-  
+
   if (session) {
-    const { id } = req.query;
-    var categorias = JSON.parse(JSON.stringify(db[session.user.email].categorias));
-    if (req.method === 'PUT') {
-      categorias.some((categoria) => {
-        if (categoria.id.toString() === id) {
-          categoria.nome = req.body.nome;
-          categoria.emoji = req.body.emoji;
-          return true;
+    const { client, db } = await connectToDatabase();
+    if (client.isConnected) {
+      const { id } = req.query;
+      const obj_id = new mongo.ObjectId(id.toString());
+
+      if (req.method === 'PUT') {
+        let categoria: CategoriaComUsuario = await db.collection('categorias')
+          .findOne({ _id: obj_id });
+        categoria.nome = req.body.nome;
+        categoria.emoji = req.body.emoji;
+        const categoriaOk = (await db.collection('categorias')
+          .updateOne({ _id: obj_id }, { $set: {...categoria}})).result.ok;
+        if (categoriaOk) {
+          res.status(200).json({ message: 'Categoria atualizada com sucesso' });
+        } else {
+          res.status(500).json({ message: 'Ocorreu um erro ao tentar atualizar categoria' });
         }
-      });
-      db[session.user.email].categorias = categorias;
-      fs.writeFileSync('/media/rodolfo/Repositorio/Programacao/linux/react-workspace/despensa/db.json', JSON.stringify(db));
-      res.status(200).json({});
-    } else if (req.method === 'DELETE') {
-      const produtos = db[session.user.email].produtos;
-      const categoria = categorias.find(categoria => categoria.id.toString() === id);
-      const temProduto = produtos.findIndex(produto => produto.categoria === categoria.nome);
-      if (temProduto > 0) {
-        res.status(400).json({'message': 'Categoria possui produtos cadastrados.'});
+      
+      } else if (req.method === 'DELETE') {
+        const deleteOk = (await db.collection('categorias')
+          .deleteOne({ _id: obj_id })).result.ok;
+        if (deleteOk) {
+          res.status(200).json({ message: 'Categoria deletada com sucesso' });
+        } else {
+          res.status(500).json({ message: 'Ocorreu um erro ao tentar deletar a categoria' });
+        }
+      
       } else {
-        const index = categorias.findIndex(categoria => categoria.id.toString() === id);
-        categorias.splice(index, 1);
-        db[session.user.email].categorias = categorias;
-        fs.writeFileSync('/media/rodolfo/Repositorio/Programacao/linux/react-workspace/despensa/db.json', JSON.stringify(db));
-        res.status(200).json({});
+        const categoria: Categoria = await db.collection('categorias')
+          .findOne({ _id: obj_id }, { projection : { usuario: 0 }});
+        res.status(200).json(categoria);
       }
+    
     } else {
-      const categoria = categorias.find(categoria => categoria.id.toString() === id);
-      res.status(200).json(categoria);
+      res.status(200).json({ message: 'Ocorreu um erro, tente novamente mais tarde' });
     }
   } else {
-    res.status(401).json({});
+    res.status(401).json({ message: 'Não autorizado' });
   }
   res.end();
 }

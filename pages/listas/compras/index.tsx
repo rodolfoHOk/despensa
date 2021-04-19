@@ -5,6 +5,7 @@ import { getSession, useSession } from "next-auth/client";
 import Loading from "../../../src/components/itens/loading";
 import Unauthorized from "../../unauthorized";
 import { Button } from "../../../src/components/itens/button";
+import { connectToDatabase } from "../../../src/utils/mongodb";
 
 export default function ListaCompras({ produtos }){
 
@@ -29,7 +30,7 @@ export default function ListaCompras({ produtos }){
         </thead>
         <tbody>
           { produtos.map(produto => (
-            <tr>
+            <tr id={`id_${produto._id}`} key={`key_${produto._id}`}>
               <td>{produto.categoria}</td>
               <td>{produto.nome}</td>
               <td>{produto.minimo}</td>
@@ -45,37 +46,21 @@ export default function ListaCompras({ produtos }){
 }
 
 export async function getServerSideProps({req, res}) {
-  var session = await getSession({req});
-
-  function ordenar(produtos : Produto[]) {
-    produtos.sort(function (a: Produto, b: Produto) {
-      var c1 = a['categoria'].toLowerCase();
-      var c2 = b['categoria'].toLowerCase();
-    
-      var n1 = a['nome'].toLowerCase();
-      var n2 = b['nome'].toLowerCase();
-    
-      if (c1 < c2) return -1;
-      if (c1 > c2) return 1;
-      if (n1 < n2) return -1;
-      if (n1 > n2) return 1;
-      return 0;
-    });
-    return produtos;
-  }
+  const session = await getSession({req});
   
   if (session && session.user.email) {
-    const listaProdutos = JSON.parse(JSON.stringify(db[session.user.email].produtos));
-    const produtosEmFalta = listaProdutos.filter(produto => produto.quantidade < produto.minimo);
-    let produtos;
-    if(produtosEmFalta.length > 1) {
-      produtos = ordenar(produtosEmFalta);
-    } else {
-      produtos = produtosEmFalta;
-    }
-    
-    return {
-      props: { produtos }
+    const { client, db } = await connectToDatabase();
+    if (client.isConnected ) {
+      const produtosEmfalta: Produto[] = await db.collection('produtos')
+        .find(
+          { usuario: session.user.email, $expr: { $lt: ['$quantidade', '$minimo']}},
+          { projection: { usuario: 0}})
+        .sort({ categoria: 1, nome: 1})
+        .toArray();
+      const produtos: Produto[] = JSON.parse(JSON.stringify(produtosEmfalta));
+      return {
+        props: { produtos }
+      }
     }
   }
 

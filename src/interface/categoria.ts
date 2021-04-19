@@ -1,5 +1,5 @@
 export default interface Categoria {
-  id: number;
+  _id: string;
   emoji: string;
   nome: string;
 }

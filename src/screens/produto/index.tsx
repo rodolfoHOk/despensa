@@ -19,7 +19,7 @@ export default function ProdutoFormScreen({produtoToUpdate, categorias}:
 
   // Campos Formulário
   const [ produto, setProduto ] = useState<Produto>({
-    id: 0,
+    _id: '',
     nome: '',
     categoria: '',
     minimo: 0,
@@ -30,7 +30,7 @@ export default function ProdutoFormScreen({produtoToUpdate, categorias}:
   useEffect(() => {
     if(produtoToUpdate){
       setProduto({
-        id: produtoToUpdate.id,
+        _id: produtoToUpdate._id,
         nome: produtoToUpdate.nome,
         categoria: produtoToUpdate.categoria,
         minimo: produtoToUpdate.minimo,
@@ -58,7 +58,7 @@ export default function ProdutoFormScreen({produtoToUpdate, categorias}:
     const isValid = formIsValid();
     if (isValid.valid) {
       if(isUpdate) {
-        putProduto(produto.id, produto)
+        putProduto(produto._id, produto)
           .then(response => {
             if (response.status === 200) {
               toast("Produto atualizado com successo.", 3000, true);
@@ -84,7 +84,7 @@ export default function ProdutoFormScreen({produtoToUpdate, categorias}:
   function limpar(event) {
     event.preventDefault();
     setProduto({
-      id: 0,
+      _id: '',
       nome: '',
       categoria: '',
       minimo: 0,
@@ -133,9 +133,9 @@ export default function ProdutoFormScreen({produtoToUpdate, categorias}:
               <Form.Row>
                 <FormField
                   label="Id"
-                  type="number"
+                  type="text"
                   name="id"
-                  value={produto.id}
+                  value={produto._id}
                   onChange={null}
                   disabled={true}
                 />
